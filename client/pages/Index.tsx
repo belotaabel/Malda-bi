@@ -945,7 +945,7 @@ export default function Index() {
             <ArrowLeft />
           </button>
           <h1 className="brand">
-            <span>NEON</span> <strong className="admin-unlock-target" onClick={handleAdminTap} onKeyDown={(event) => { if (event.key === "Enter" || event.key === " ") handleAdminTap(); }} role="button" tabIndex={0}>{gameType}</strong> <em>BINGO</em>
+            <span>ቀመር</span> <strong className="admin-unlock-target" onClick={handleAdminTap} onKeyDown={(event) => { if (event.key === "Enter" || event.key === " ") handleAdminTap(); }} role="button" tabIndex={0}>{gameType}</strong> <em>BINGO</em>
           </h1>
           <span className="game-id">Game ID: {game?.gameId ?? gameId ?? "—"}</span>
         </header>
@@ -1050,7 +1050,7 @@ export default function Index() {
           <ArrowLeft />
         </button>
         <h1 className="brand">
-          <span>NEON</span> <strong className="admin-unlock-target" onClick={handleAdminTap} onKeyDown={(event) => { if (event.key === "Enter" || event.key === " ") handleAdminTap(); }} role="button" tabIndex={0}>{gameType}</strong> <em>BINGO</em>
+          <span>ቀመር</span> <strong className="admin-unlock-target" onClick={handleAdminTap} onKeyDown={(event) => { if (event.key === "Enter" || event.key === " ") handleAdminTap(); }} role="button" tabIndex={0}>{gameType}</strong> <em>BINGO</em>
         </h1>
         <div className="top-actions">
           <button

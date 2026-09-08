@@ -21,7 +21,7 @@ class AppErrorBoundary extends Component<{ children: ReactNode }, { error: Error
   }
 
   componentDidCatch(error: Error, info: ErrorInfo) {
-    console.error("Neon Bingo application error", error, info);
+    console.error("ቀመር Bingo application error", error, info);
   }
 
   render() {
