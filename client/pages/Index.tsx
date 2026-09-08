@@ -889,7 +889,7 @@ export default function Index() {
       <main className="selection-reference-shell">
         <div className="selection-reference-canvas">
           <img
-            src="https://cdn.builder.io/api/v1/image/assets%2Fd48b754df01642619b05ad95c159705b%2F44880a41fb5c42d49bc043a7c6660c27?format=webp&width=800&height=1200"
+            src="https://cdn.builder.io/api/v1/image/assets%2Fd48b754df01642619b05ad95c159705b%2F4564914d5e6f42a7982e3f693c751b14?format=webp&width=800&height=1200"
             alt="Maleda Bingo card selection design"
             className="selection-reference-artwork"
           />
