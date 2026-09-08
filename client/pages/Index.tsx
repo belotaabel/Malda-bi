@@ -784,34 +784,44 @@ export default function Index() {
   const winningRows = winningLines(cardForId(winnerCardId ?? -1));
   if (screen === "landing")
     return (
-      <main className="app-shell landing-shell">
-        <div className="landing-glow landing-glow-one" />
-        <div className="landing-glow landing-glow-two" />
-        <section className="landing-content">
-          <span className="landing-kicker">WELCOME TO</span>
-          <h2>
-            <span>NEON</span> <strong className="admin-unlock-target" onClick={handleAdminTap} onKeyDown={(event) => { if (event.key === "Enter" || event.key === " ") handleAdminTap(); }} role="button" tabIndex={0}>{gameType}</strong>
-            <br />
-            <em>BINGO</em>
-          </h2>
-          <p>የ75 ቢንጎ ጨዋታን ይጫወቱ።</p>
-          <div className="landing-highlights">
-            <span>400 ካርዶች</span>
-            <i /> <span>እስከ 2 ካርዶች</span>
-            <i /> <span>{gameType} ቁጥሮች</span>
-          </div>
-        </section>
-        <button
-          className="landing-start"
-          onClick={() => {
-            setScreen("selection");
-            setNotice("");
-          }}
-        >
-          ጨዋታ ጀምር <b>→</b>
-        </button>
-        <small className="landing-note">ካርድዎን ለመምረጥ ይቀጥሉ</small>
-      {adminUnlockOpen && <AdminPasswordDialog onClose={() => setAdminUnlockOpen(false)} onSuccess={completeAdminLogin} />}
+      <main className="maleda-landing-shell" id="home">
+        <div className="maleda-artwork-canvas">
+          <img
+            src="/maleda-landing.png"
+            alt="Maleda Bingo — play, win, and get rewarded"
+            className="maleda-artwork"
+          />
+          <nav className="maleda-hotspot-layer" aria-label="Maleda Bingo navigation">
+            <a className="maleda-hotspot hotspot-home" href="#home"><span className="sr-only">Home</span></a>
+            <button className="maleda-hotspot hotspot-games" type="button" onClick={() => { setScreen("selection"); setNotice(""); }}>
+              <span className="sr-only">Games</span>
+            </button>
+            <a className="maleda-hotspot hotspot-bonuses" href="#bonuses"><span className="sr-only">Bonuses</span></a>
+            <a className="maleda-hotspot hotspot-how-to-play" href="#how-to-play"><span className="sr-only">How to Play</span></a>
+            <button className="maleda-hotspot hotspot-faq" type="button" onClick={() => setNotice("FAQ በቅርቡ ይጨመራል።")}>
+              <span className="sr-only">FAQ</span>
+            </button>
+            <button className="maleda-hotspot hotspot-top-cta" type="button" onClick={() => { setScreen("selection"); setNotice(""); }}>
+              <span className="sr-only">Play Now</span>
+            </button>
+            <button className="maleda-hotspot hotspot-hero-cta" type="button" onClick={() => { setScreen("selection"); setNotice(""); }}>
+              <span className="sr-only">Hero Play Now</span>
+            </button>
+            <a className="maleda-hotspot hotspot-join-cta" href="https://t.me/maledabingo" target="_blank" rel="noreferrer">
+              <span className="sr-only">Join Now</span>
+            </a>
+            <a className="maleda-hotspot hotspot-promo-cta" href="#bonuses"><span className="sr-only">Promo Code</span></a>
+            <button className="maleda-hotspot hotspot-agent-cta" type="button" onClick={() => setNotice("የAgent Program መመዝገቢያ በቅርቡ ይከፈታል።")}>
+              <span className="sr-only">Become an Agent</span>
+            </button>
+            <button className="maleda-hotspot hotspot-start-cta" type="button" onClick={() => { setScreen("selection"); setNotice(""); }}>
+              <span className="sr-only">Start Playing</span>
+            </button>
+            <button className="maleda-hotspot hotspot-admin" type="button" aria-label="Admin access" onClick={handleAdminTap} />
+          </nav>
+        </div>
+        {notice && <div className="maleda-toast" role="status">{notice}</div>}
+        {adminUnlockOpen && <AdminPasswordDialog onClose={() => setAdminUnlockOpen(false)} onSuccess={completeAdminLogin} />}
       </main>
     );
   if (finalizing && loadingError)
@@ -830,6 +840,97 @@ export default function Index() {
         <h1>ጨዋታው እየተዘጋጀ ነው</h1>
         <p>ካርዶች ተረጋግጠዋል። ጨዋታው በቅርቡ ይጀምራል...</p>
       {adminUnlockOpen && <AdminPasswordDialog onClose={() => setAdminUnlockOpen(false)} onSuccess={completeAdminLogin} />}
+      </main>
+    );
+  if (playing)
+    return (
+      <main className="maleda-game-shell">
+        <div className="maleda-game-canvas">
+          <img src="/maleda-game.jpg" alt="Maleda Bingo live game board" className="maleda-game-artwork" />
+          <section className="maleda-game-hotspots" aria-label="Live bingo game controls">
+            <div className="maleda-call-grid" aria-label="Called number board">
+              {Array.from({ length: 75 }, (_, index) => index + 1).map((number) => (
+                <button
+                  key={number}
+                  type="button"
+                  className={called.has(number) ? "called" : ""}
+                  aria-label={`${number}${called.has(number) ? " called" : ""}`}
+                  onClick={() => setNotice(`${number} ${called.has(number) ? "ተጠርቷል" : "ገና አልተጠራም"}`)}
+                >
+                  <span className="sr-only">{number}</span>
+                </button>
+              ))}
+            </div>
+            <button className="maleda-game-control auto" type="button" onClick={() => setNotice("Automatic play በserver ይቆጣጠራል።")} aria-label="Automatic play" />
+            <button className="maleda-game-control sound" type="button" onClick={toggleSound} aria-label={soundEnabled ? "Mute sound" : "Turn on sound"} />
+            <button className="maleda-game-control refresh" type="button" onClick={() => window.location.reload()} aria-label="Refresh game" />
+            <button className="maleda-game-control leave" type="button" onClick={() => { setPlaying(false); setCountdown(50); }} aria-label="Leave live game" />
+            <button className="maleda-player-card card-one" type="button" onClick={() => setNotice("የመጀመሪያው የተገዛ ካርድ ነው።")} aria-label={`Selected board ${selected[0] ?? "—"}`} />
+            <button className="maleda-player-card card-two" type="button" onClick={() => setNotice("ሁለተኛው የተገዛ ካርድ ነው።")} aria-label={`Selected board ${selected[1] ?? "—"}`} />
+            <button className="maleda-game-admin" type="button" aria-label="Admin access" onClick={handleAdminTap} />
+          </section>
+        </div>
+        {notice && <div className="maleda-toast" role="status">{notice}</div>}
+        {winnerAnnouncement && (
+          <div className="maleda-winner-toast" role="status">
+            <strong>BINGO!</strong>
+            <span>{winners.map((winner) => winner.displayName).join(", ") || "Winner announced"}</span>
+            <small>{winnerAnnouncement.prizeAmount ?? 0} ብር</small>
+          </div>
+        )}
+        {adminUnlockOpen && <AdminPasswordDialog onClose={() => setAdminUnlockOpen(false)} onSuccess={completeAdminLogin} />}
+      </main>
+    );
+  if (!playing && screen === "selection" && !finalizing)
+    return (
+      <main className="maleda-selection-shell">
+        <div className="maleda-selection-canvas">
+          <img src="/maleda-selection.png" alt="Maleda Bingo card selection board" className="maleda-selection-artwork" />
+          <section className="maleda-selection-hotspots" aria-label="Bingo card selection controls">
+            <div className="maleda-board-grid" aria-label="Available bingo boards">
+              {Array.from({ length: 100 }, (_, index) => index + 261).map((id) => (
+                <button
+                  key={id}
+                  type="button"
+                  className={`${selected.includes(id) ? "active" : ""} ${occupiedCardIds.has(id) ? "occupied" : ""}`}
+                  onClick={() => toggle(id)}
+                  disabled={selectionLocked || occupiedCardIds.has(id)}
+                  aria-pressed={selected.includes(id)}
+                  aria-label={`Board ${id}`}
+                >
+                  <span className="sr-only">Board {id}</span>
+                </button>
+              ))}
+            </div>
+            <button className="maleda-selection-control remove" type="button" onClick={() => selected.length && toggle(selected[selected.length - 1])} aria-label="Remove selected card" />
+            <button className="maleda-selection-control remove-all" type="button" onClick={() => selected.forEach((id) => toggle(id))} aria-label="Remove all cards" />
+            <button className="maleda-selection-control play" type="button" disabled={selectionLocked || !selected.length || countdown !== null} onClick={start} aria-label="Start bingo game" />
+            <button className="maleda-selection-control leave" type="button" onClick={() => { setScreen("landing"); setSelected([]); setCountdown(null); setNotice(""); }} aria-label="Leave game" />
+          </section>
+        </div>
+        <div className="maleda-selection-status" aria-live="polite">
+          <span>{selectionLocked ? "ጨዋታ እየተካሄደ ነው" : "ካርድ ይምረጡ"}</span>
+          <b>{countdown !== null ? countdown : selected.length}/2</b>
+          {notice && <small>{notice}</small>}
+        </div>
+        {leaderboardOpen && <LeaderboardPanel apiBase={apiBase} onClose={() => setLeaderboardOpen(false)} />}
+        {panel && (
+          <WalletPanel
+            panel={panel}
+            user={user}
+            wallet={wallet}
+            apiBase={apiBase}
+            initData={initData}
+            walletForm={walletForm}
+            setWalletForm={setWalletForm}
+            walletBusy={walletBusy}
+            setWalletBusy={setWalletBusy}
+            loadWallet={loadWallet}
+            onClose={() => setPanel(null)}
+            onNotice={setNotice}
+          />
+        )}
+        {adminUnlockOpen && <AdminPasswordDialog onClose={() => setAdminUnlockOpen(false)} onSuccess={completeAdminLogin} />}
       </main>
     );
   if (playing)
