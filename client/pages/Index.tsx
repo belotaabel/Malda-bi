@@ -884,6 +884,78 @@ export default function Index() {
         {adminUnlockOpen && <AdminPasswordDialog onClose={() => setAdminUnlockOpen(false)} onSuccess={completeAdminLogin} />}
       </main>
     );
+  if (!playing && screen === "selection" && !finalizing)
+    return (
+      <main className="selection-reference-shell">
+        <div className="selection-reference-canvas">
+          <img
+            src="https://cdn.builder.io/api/v1/image/assets%2Fd48b754df01642619b05ad95c159705b%2F44880a41fb5c42d49bc043a7c6660c27?format=webp&width=800&height=1200"
+            alt="Maleda Bingo card selection design"
+            className="selection-reference-artwork"
+          />
+          <section className="selection-reference-overlay" aria-label="Bingo card selection">
+            <div className="selection-reference-board" aria-label="Available Bingo cards">
+              {Array.from({ length: 100 }, (_, index) => index + 261).map((id) => {
+                const card = cardForId(id);
+                const occupied = occupiedCardIds.has(id);
+                if (!card) return null;
+                return (
+                  <button
+                    key={id}
+                    type="button"
+                    className={`${selected.includes(id) ? "selected" : ""} ${occupied ? "occupied" : ""}`}
+                    onClick={() => toggle(id)}
+                    disabled={selectionLocked || occupied}
+                    aria-pressed={selected.includes(id)}
+                    aria-label={occupied ? `Card ${id}, occupied` : `Card ${id}`}
+                  >
+                    {id}
+                  </button>
+                );
+              })}
+            </div>
+            <div className="selection-reference-actions">
+              <button type="button" onClick={() => selected.length && toggle(selected[selected.length - 1])} aria-label="Remove last selected card">Remove</button>
+              <button type="button" onClick={() => selected.forEach((id) => toggle(id))} aria-label="Remove all selected cards">Remove All</button>
+              <button type="button" className="play" disabled={selectionLocked || !selected.length || countdown !== null} onClick={start}>Play</button>
+              <button type="button" className="leave" onClick={() => { setScreen("landing"); setSelected([]); setCountdown(null); setNotice(""); }}>Leave</button>
+            </div>
+            <section className="selection-reference-purchased" aria-label="Selected card previews">
+              <h2>Your Purchased Cards <span>{selected.length}/2</span></h2>
+              <div className="selection-reference-tickets">
+                {selected.map((id) => {
+                  const card = cardForId(id);
+                  return card ? <CardView key={id} card={card} selected called={called} onClick={() => toggle(id)} gameType={gameType} /> : null;
+                })}
+              </div>
+            </section>
+          </section>
+        </div>
+        <div className="selection-reference-status" aria-live="polite">
+          <span>{selectionCountdownExpired ? "የካርድ ምርጫው ተዘግቷል" : selectionLocked ? "ጨዋታ እየተካሄደ ነው" : "ካርድ ይምረጡ"}</span>
+          <b>{selected.length}/2</b>
+          {notice && <small>{notice}</small>}
+        </div>
+        {leaderboardOpen && <LeaderboardPanel apiBase={apiBase} onClose={() => setLeaderboardOpen(false)} />}
+        {panel && (
+          <WalletPanel
+            panel={panel}
+            user={user}
+            wallet={wallet}
+            apiBase={apiBase}
+            initData={initData}
+            walletForm={walletForm}
+            setWalletForm={setWalletForm}
+            walletBusy={walletBusy}
+            setWalletBusy={setWalletBusy}
+            loadWallet={loadWallet}
+            onClose={() => setPanel(null)}
+            onNotice={setNotice}
+          />
+        )}
+        {adminUnlockOpen && <AdminPasswordDialog onClose={() => setAdminUnlockOpen(false)} onSuccess={completeAdminLogin} />}
+      </main>
+    );
   if (playing)
     return (
       <main className="app-shell playing-shell">
