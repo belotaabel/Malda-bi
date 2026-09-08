@@ -847,38 +847,54 @@ export default function Index() {
     );
   if (playing)
     return (
-      <main className="maleda-game-shell">
-        <div className="maleda-game-canvas">
-          <img src="/maleda-game.jpg" alt="Maleda Bingo live game board" className="maleda-game-artwork" />
-          <section className="maleda-game-hotspots" aria-label="Live bingo game controls">
-            <div className="maleda-call-grid" aria-label="Called number board">
-              {Array.from({ length: 75 }, (_, index) => index + 1).map((number) => (
-                <button
-                  key={number}
-                  type="button"
-                  className={called.has(number) ? "called" : ""}
-                  aria-label={`${number}${called.has(number) ? " called" : ""}`}
-                  onClick={() => setNotice(`${number} ${called.has(number) ? "ተጠርቷል" : "ገና አልተጠራም"}`)}
-                >
-                  <span className="sr-only">{number}</span>
-                </button>
-              ))}
-            </div>
-            <button className="maleda-game-control auto" type="button" onClick={() => setNotice("Automatic play በserver ይቆጣጠራል።")} aria-label="Automatic play" />
-            <button className="maleda-game-control sound" type="button" onClick={toggleSound} aria-label={soundEnabled ? "Mute sound" : "Turn on sound"} />
-            <button className="maleda-game-control refresh" type="button" onClick={() => window.location.reload()} aria-label="Refresh game" />
-            <button className="maleda-game-control leave" type="button" onClick={() => { setPlaying(false); setCountdown(50); }} aria-label="Leave live game" />
-            <button className="maleda-player-card card-one" type="button" onClick={() => setNotice("የመጀመሪያው የተገዛ ካርድ ነው።")} aria-label={`Selected board ${selected[0] ?? "—"}`} />
-            <button className="maleda-player-card card-two" type="button" onClick={() => setNotice("ሁለተኛው የተገዛ ካርድ ነው።")} aria-label={`Selected board ${selected[1] ?? "—"}`} />
-            <button className="maleda-game-admin" type="button" aria-label="Admin access" onClick={handleAdminTap} />
-          </section>
+      <main className="live-game-shell">
+        <header className="live-game-header">
+          <button type="button" className="live-game-close" onClick={() => { setPlaying(false); setCountdown(50); }} aria-label="Leave live game">×</button>
+          <h1>ቀመር Bingo</h1>
+          <div className="live-game-header-actions">
+            <button type="button" onClick={() => setNotice("ጨዋታው በቀጥታ እየተካሄደ ነው።")} aria-label="Game menu">⌄</button>
+            <button type="button" onClick={handleAdminTap} aria-label="Admin access"><MoreVertical /></button>
+          </div>
+        </header>
+        <div className="live-game-wallet-row">
+          <span className="live-game-mode">V</span>
+          <div className="live-game-balance"><Wallet size={18} /><strong>{user?.player_balance ?? 0}</strong><i /> <span>● {game?.cardCount ?? selected.length}</span></div>
         </div>
-        {notice && <div className="maleda-toast" role="status">{notice}</div>}
+        <section className="live-game-stats" aria-label="Live game statistics">
+          <span><small>Game</small><b>{game?.gameId?.slice(0, 5) ?? "MyGBG"}</b></span>
+          <span><small>Derash</small><b>{game?.prizeAmount?.toFixed(2) ?? "0.00"}</b></span>
+          <span><small>Bonus</small><b>0</b></span>
+          <span><small>Players</small><b>{game?.playerCount ?? 0}</b></span>
+          <span><small>Calls</small><b>{called.size}</b></span>
+          <button type="button" onClick={() => { setPlaying(false); setCountdown(50); }}>Exit</button>
+        </section>
+        <section className="live-game-calls" aria-label="Latest called numbers">
+          {(game?.calledNumbers ?? []).slice(-3).map((number) => (
+            <span key={number} className={number === currentBall ? "current" : ""}>
+              {number <= 15 ? "B" : number <= 30 ? "I" : number <= 45 ? "N" : number <= 60 ? "G" : "O"}{number}
+            </span>
+          ))}
+          {!game?.calledNumbers?.length && <span className="current">—</span>}
+        </section>
+        <div className="live-game-main">
+          <section className="live-player-cards" aria-label="Your purchased cards">
+            {selected.map((id) => {
+              const card = cardForId(id);
+              return card ? <CardView key={id} card={card} selected called={called} onClick={() => undefined} gameType={gameType} /> : null;
+            })}
+          </section>
+          <p className="live-game-message">እንደ ደስ ብሎ<br />እንጫወት!</p>
+        </div>
+        {notice && <div className="live-game-notice" role="status">{notice}</div>}
         {winnerAnnouncement && (
-          <div className="maleda-winner-toast" role="status">
-            <strong>BINGO!</strong>
-            <span>{winners.map((winner) => winner.displayName).join(", ") || "Winner announced"}</span>
-            <small>{winnerAnnouncement.prizeAmount ?? 0} ብር</small>
+          <div className="winner-modal" role="status">
+            <div className="winner-badge">BINGO!</div>
+            <h2>እንኳን ደስ አለዎት</h2>
+            <div className="winner-details">
+              <p>አሸናፊ: <b>{winners.map((winner) => winner.displayName).join(", ")}</b></p>
+              <p>የሽልማቱ መጠን: <b>{winnerAnnouncement.prizeAmount ?? 0} ብር</b></p>
+            </div>
+            <button type="button" className="winner-confirm" onClick={() => setWinnerAnnouncement(null)}>እሺ!</button>
           </div>
         )}
         {adminUnlockOpen && <AdminPasswordDialog onClose={() => setAdminUnlockOpen(false)} onSuccess={completeAdminLogin} />}
