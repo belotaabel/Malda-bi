@@ -108,7 +108,7 @@ function AdminSidebar({ activeTab, onSelect, open, onClose }: { activeTab: Admin
       <aside className={`admin-sidebar ${open ? "is-open" : ""}`}>
         <div className="admin-brand">
           <div className="admin-brand-mark"><Bot size={22} /></div>
-          <div><strong>NEON</strong><span>ADMIN CONSOLE</span></div>
+          <div><strong>ቀመር Bingo</strong><span>ADMIN CONSOLE</span></div>
           <button className="admin-mobile-close" aria-label="Close menu" onClick={onClose}><X size={20} /></button>
         </div>
         <div className="admin-workspace"><span className="admin-live-dot" /> LIVE WORKSPACE <ChevronRight size={14} /></div>

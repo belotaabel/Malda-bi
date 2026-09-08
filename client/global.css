@@ -105,6 +105,34 @@ button:focus-visible, [role="button"]:focus-visible, input:focus-visible { outli
   }
 }
 
+.selection-reference-shell { min-height: 100svh; overflow-x: hidden; background: #020b25; }
+.selection-reference-canvas { position: relative; width: min(100vw, 800px); margin: 0 auto; line-height: 0; }
+.selection-reference-artwork { display: block; width: 100%; height: auto; user-select: none; }
+.selection-reference-overlay { position: absolute; inset: 0; pointer-events: none; }
+.selection-reference-board { position: absolute; top: 23%; left: 0; width: 100%; height: 40%; display: grid; grid-template-columns: repeat(10, 1fr); grid-template-rows: repeat(10, 1fr); gap: 1.1%; padding: 1.3%; pointer-events: auto; }
+.selection-reference-board button { min-width: 0; border: 0; border-radius: 10px; background: transparent; color: transparent; font-size: 0; outline: none; }
+.selection-reference-board button.selected { box-shadow: inset 0 0 0 4px #fff, 0 0 14px 5px rgba(255, 210, 28, .92); background: rgba(255, 210, 28, .26); }
+.selection-reference-board button.occupied { cursor: not-allowed; background: rgba(12, 16, 35, .58); }
+.selection-reference-actions { position: absolute; top: 64.2%; left: 6%; width: 88%; height: 5.8%; display: grid; grid-template-columns: 1.15fr 1.15fr 1fr 1fr; gap: 2%; pointer-events: auto; }
+.selection-reference-actions button { border: 0; border-radius: 999px; background: transparent; color: transparent; font-size: 0; outline: none; }
+.selection-reference-actions button:disabled { cursor: not-allowed; }
+.selection-reference-actions button:focus-visible, .selection-reference-board button:focus-visible { box-shadow: inset 0 0 0 3px #fff, 0 0 0 5px #ffd21c; }
+.selection-reference-purchased { position: absolute; top: 77%; left: 12%; width: 76%; height: 20%; pointer-events: auto; }
+.selection-reference-purchased h2 { position: absolute; top: -2%; left: 7%; margin: 0; color: #ffe36e; font-family: Inter, sans-serif; font-size: clamp(11px, 2.4vw, 20px); line-height: 1; text-shadow: 0 0 8px rgba(255, 210, 28, .72); }
+.selection-reference-purchased h2 span { margin-left: 8px; color: #fff; font-size: .7em; }
+.selection-reference-tickets { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 4%; height: 100%; padding: 5% 8% 0; }
+.selection-reference-tickets .ticket-card { min-width: 0; padding: 4px; border: 2px solid #02c9ff; border-radius: 18px; background: linear-gradient(145deg, rgba(4, 61, 126, .94), rgba(3, 19, 70, .95)); box-shadow: 0 0 10px rgba(0, 194, 255, .72), inset 0 0 12px rgba(0, 80, 255, .62); }
+.selection-reference-tickets .ticket-title { margin: 0 4px 2px; color: #fff; font-size: clamp(9px, 1.8vw, 15px); }
+.selection-reference-tickets .ticket-title b { color: #fff; font-size: clamp(10px, 2vw, 16px); }
+.selection-reference-tickets .ticket-columns { gap: 1px; margin-bottom: 1px; color: #fff; font-size: clamp(7px, 1.5vw, 12px); }
+.selection-reference-tickets .ticket-grid { gap: 1px; }
+.selection-reference-tickets .ticket-grid span { min-height: 0; aspect-ratio: 1.35; border-radius: 3px; background: #079c54; color: #fff; font-size: clamp(7px, 1.55vw, 13px); }
+.selection-reference-tickets .ticket-grid span.marked { background: #ffac16; color: #fff; }
+.selection-reference-tickets .ticket-card small { display: none; }
+.selection-reference-status { position: fixed; z-index: 20; right: 14px; bottom: 14px; display: flex; align-items: center; gap: 10px; max-width: min(440px, calc(100vw - 28px)); padding: 9px 13px; border: 1px solid rgba(255, 210, 28, .72); border-radius: 12px; background: rgba(2, 11, 37, .94); color: #fff; font: 700 13px/1.3 Arial, sans-serif; box-shadow: 0 10px 28px rgba(0, 0, 0, .35); }
+.selection-reference-status b { color: #ffd21c; font-size: 18px; }
+.selection-reference-status small { max-width: 230px; color: #d7e5ff; font-weight: 500; }
+
 .maleda-selection-shell,
 .maleda-game-shell {
   min-height: 100svh;
@@ -305,6 +333,41 @@ button:focus-visible, [role="button"]:focus-visible, input:focus-visible { outli
   }
 }
 
+.live-game-shell { min-height: 100svh; overflow-x: hidden; padding-bottom: 28px; background: #005452; color: #f5f7ed; }
+.live-game-header { display: flex; align-items: center; justify-content: space-between; min-height: 74px; padding: 0 17px; background: #182531; }
+.live-game-header h1 { margin: 0; color: #f8faf7; font-size: clamp(22px, 5vw, 30px); font-weight: 800; }
+.live-game-close, .live-game-header-actions button { display: grid; place-items: center; background: transparent; color: #f8faf7; }
+.live-game-close { width: 40px; font-size: 43px; font-weight: 200; line-height: 1; }
+.live-game-header-actions { display: flex; align-items: center; gap: 15px; }
+.live-game-header-actions button { width: 28px; height: 38px; font-size: 33px; line-height: 1; }
+.live-game-header-actions svg { width: 26px; height: 26px; }
+.live-game-wallet-row { display: flex; align-items: center; justify-content: space-between; padding: 9px 24px 8px; background: #19343f; }
+.live-game-mode { display: grid; width: 48px; height: 48px; place-items: center; border-radius: 50%; background: #46606d; color: #f5f7ed; font-size: 22px; font-weight: 800; }
+.live-game-balance { display: flex; align-items: center; gap: 8px; min-width: 174px; padding: 8px 13px; border-radius: 13px; background: #ffae00; color: #1e2523; font-size: 20px; }
+.live-game-balance strong { font-weight: 500; }
+.live-game-balance i { width: 1px; height: 27px; background: rgba(30, 37, 35, .7); }
+.live-game-balance span { font-size: 19px; }
+.live-game-stats { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)) auto; gap: 6px; padding: 7px 0 4px; background: #005452; }
+.live-game-stats span { display: grid; min-width: 0; place-items: center; padding: 4px 4px 5px; border: 1px solid rgba(100, 231, 224, .62); border-radius: 22px; background: #087d7c; box-shadow: inset 0 -4px rgba(0, 74, 75, .23); }
+.live-game-stats small { color: #baf4e7; font-size: 10px; line-height: 1; }
+.live-game-stats b { overflow: hidden; max-width: 100%; color: #f6fcf6; font-size: 14px; text-overflow: ellipsis; white-space: nowrap; }
+.live-game-stats button { padding: 8px 12px; border-radius: 20px; background: #e84a4e; color: #fff; font-size: 14px; font-weight: 800; }
+.live-game-calls { display: flex; align-items: center; gap: 7px; min-height: 58px; padding: 6px 9px; background: #005452; }
+.live-game-calls span { display: grid; min-width: 58px; height: 52px; place-items: center; padding: 0 9px; border: 1px solid rgba(73, 219, 220, .6); border-radius: 50%; background: #087d7c; color: #f6fcf6; font-size: 20px; font-weight: 800; }
+.live-game-calls span.current { background: #ff9f08; color: #fff; box-shadow: 0 0 11px rgba(255, 185, 23, .55); }
+.live-game-main { display: grid; grid-template-columns: minmax(0, 220px) minmax(0, 1fr); align-items: center; gap: 18px; min-height: 600px; padding: 10px 9px 30px; }
+.live-player-cards { display: grid; gap: 8px; min-width: 0; }
+.live-player-cards .ticket-card { padding: 4px; border: 2px solid #26616a; border-radius: 7px; background: #343b3f; box-shadow: 0 2px 5px rgba(0, 0, 0, .25); }
+.live-player-cards .ticket-title { margin: 0 2px 3px; color: #fff; font-size: 10px; }
+.live-player-cards .ticket-title b { color: #fff; font-size: 12px; }
+.live-player-cards .ticket-columns { gap: 2px; margin-bottom: 2px; font-size: 11px; }
+.live-player-cards .ticket-columns b { display: grid; aspect-ratio: 1; place-items: center; border-radius: 50%; color: #fff; }
+.live-player-cards .ticket-columns b:nth-child(1) { background: #ff9700; }.live-player-cards .ticket-columns b:nth-child(2) { background: #4ed16e; }.live-player-cards .ticket-columns b:nth-child(3) { background: #08a969; }.live-player-cards .ticket-columns b:nth-child(4) { background: #f34c48; }.live-player-cards .ticket-columns b:nth-child(5) { background: #a35be8; }
+.live-player-cards .ticket-grid { gap: 2px; }.live-player-cards .ticket-grid span { min-height: 27px; border-radius: 3px; background: #414346; color: #ededed; font-size: 13px; }.live-player-cards .ticket-grid span.marked { background: #ff9d00; color: #202629; }.live-player-cards .ticket-grid span.marked:first-child { background: #59e379; }
+.live-player-cards .ticket-card small { display: none; }
+.live-game-message { margin: 0; color: #ffae00; font-family: "Noto Sans Ethiopic", sans-serif; font-size: clamp(24px, 5vw, 38px); font-weight: 900; line-height: 1.55; text-align: center; text-shadow: 0 2px #7a3d00; }
+.live-game-notice { position: fixed; z-index: 80; right: 14px; bottom: 14px; max-width: calc(100% - 28px); padding: 10px 14px; border: 1px solid #ffd66b; border-radius: 12px; background: rgba(2, 31, 37, .96); color: #fff; font-family: "Noto Sans Ethiopic", sans-serif; font-size: 13px; }
+
 .app-shell {
   min-height: 100svh;
   max-width: 760px;
@@ -378,6 +441,10 @@ button:focus-visible, [role="button"]:focus-visible, input:focus-visible { outli
 .number-grid button.active { border-color: var(--gold); background: linear-gradient(145deg, var(--gold-bright), var(--gold-deep)); box-shadow: 0 0 14px rgba(244, 189, 69, .64), inset 0 0 12px #fff2aa; color: #2d210d; }
 .number-grid button.occupied, .number-grid button.bot-occupied { border-color: var(--gold-bright); background: repeating-linear-gradient(135deg, #80601f 0 7px, #4d3715 7px 14px); box-shadow: inset 0 0 7px rgba(31, 22, 5, .45), 0 0 7px rgba(244, 189, 69, .28); color: #fff5c9; cursor: not-allowed; opacity: 1; }
 .number-grid button:disabled { cursor: not-allowed; }
+.card-selection-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; max-height: 58svh; margin-top: 18px; overflow-y: auto; padding: 4px; scrollbar-color: var(--gold) #2b111a; }
+.card-selection-grid .ticket-card { cursor: pointer; }
+.card-selection-grid .ticket-card.occupied { cursor: not-allowed; border-color: var(--border); background: rgba(20, 24, 28, .75); opacity: .58; filter: saturate(.55); }
+.card-selection-grid .ticket-card.occupied .ticket-grid span { background: rgba(55, 60, 61, .72); color: #9ba6a0; }
 .selected-previews { margin-top: 10px; }
 .selected-previews h2 { margin: 0 4px 12px; color: #f7e8eb; font-family: "Noto Sans Ethiopic", sans-serif; font-size: 15px; }
 .selected-previews h2 span { float: right; color: var(--gold-bright); }
