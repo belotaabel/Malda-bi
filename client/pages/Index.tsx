@@ -765,23 +765,24 @@ export default function Index() {
   const winners = winnerAnnouncement?.winners ?? [];
   const winnerCardIds = winners.map((winner) => winner.cardNumber);
   const winnerCardId = winnerCardIds[0] ?? null;
+  const resetWinnerRound = () => {
+    setWinnerAnnouncement(null);
+    setPlaying(false);
+    setScreen("selection");
+    setGame(null);
+    setCalled(new Set());
+    setCurrentBall(null);
+    setSelected([]);
+    setGameId(null);
+    currentGameId.current = null;
+    setOccupiedCardIds(new Set());
+    setSelectionEndsAt(null);
+    setCountdown(50);
+    setNotice("");
+  };
   useEffect(() => {
     if (!winnerAnnouncement) return;
-    const resetTimer = window.setTimeout(() => {
-      setWinnerAnnouncement(null);
-      setPlaying(false);
-      setScreen("selection");
-      setGame(null);
-      setCalled(new Set());
-      setCurrentBall(null);
-      setSelected([]);
-      setGameId(null);
-      currentGameId.current = null;
-      setOccupiedCardIds(new Set());
-      setSelectionEndsAt(null);
-      setCountdown(50);
-      setNotice("");
-    }, 8000);
+    const resetTimer = window.setTimeout(resetWinnerRound, 8000);
     return () => window.clearTimeout(resetTimer);
   }, [winnerAnnouncement]);
   const winningRows = winningLines(cardForId(winnerCardId ?? -1));
@@ -887,14 +888,30 @@ export default function Index() {
         </div>
         {notice && <div className="live-game-notice" role="status">{notice}</div>}
         {winnerAnnouncement && (
-          <div className="winner-modal" role="status">
-            <div className="winner-badge">BINGO!</div>
-            <h2>እንኳን ደስ አለዎት</h2>
-            <div className="winner-details">
-              <p>አሸናፊ: <b>{winners.map((winner) => winner.displayName).join(", ")}</b></p>
-              <p>የሽልማቱ መጠን: <b>{winnerAnnouncement.prizeAmount ?? 0} ብር</b></p>
+          <div className="live-winner-modal" role="dialog" aria-modal="true" aria-labelledby="live-winner-title">
+            <div className="live-winner-content">
+              <h2 id="live-winner-title">BINGO!</h2>
+              <div className="live-winner-payouts">
+                {winners.map((winner) => (
+                  <p key={`${winner.userId}-${winner.cardNumber}`}>
+                    <span>{winner.displayName} has won</span>
+                    <strong>{(winnerAnnouncement.prizeAmount / Math.max(winners.length, 1)).toFixed(2)} ETB</strong>
+                  </p>
+                ))}
+              </div>
+              <div className="live-winner-cards">
+                {winners.map((winner) => {
+                  const card = cardForId(winner.cardNumber);
+                  return card ? (
+                    <article key={`${winner.userId}-${winner.cardNumber}`}>
+                      <span>Board {winner.cardNumber > 400 ? winner.cardNumber - 400 : winner.cardNumber}</span>
+                      <CardView card={card} selected={false} called={called} winningLineIds={winner.rows} onClick={() => undefined} gameType={gameType} />
+                    </article>
+                  ) : null;
+                })}
+              </div>
+              <button type="button" className="live-winner-play-again" onClick={resetWinnerRound}>Play Again</button>
             </div>
-            <button type="button" className="winner-confirm" onClick={() => setWinnerAnnouncement(null)}>እሺ!</button>
           </div>
         )}
         {adminUnlockOpen && <AdminPasswordDialog onClose={() => setAdminUnlockOpen(false)} onSuccess={completeAdminLogin} />}
