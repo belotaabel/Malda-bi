@@ -108,6 +108,7 @@ declare global {
 function CardView({
   card,
   selected,
+  occupied = false,
   called,
   onClick,
   winningLineIds,
@@ -115,6 +116,7 @@ function CardView({
 }: {
   card: Card;
   selected: boolean;
+  occupied?: boolean;
   called: Set<number>;
   onClick: () => void;
   winningLineIds?: number[];
@@ -122,12 +124,13 @@ function CardView({
 }) {
   return (
     <article
-      className={`ticket-card ${selected ? "selected" : ""}`}
-      onClick={onClick}
+      className={`ticket-card ${selected ? "selected" : ""} ${occupied ? "occupied" : ""}`}
+      onClick={() => { if (!occupied) onClick(); }}
       role="button"
-      tabIndex={0}
+      aria-disabled={occupied}
+      tabIndex={occupied ? -1 : 0}
       onKeyDown={(e) => {
-        if (e.key === "Enter" || e.key === " ") onClick();
+        if (!occupied && (e.key === "Enter" || e.key === " ")) onClick();
       }}
     >
       <header className="ticket-title">
@@ -155,7 +158,7 @@ function CardView({
           )),
         )}
       </div>
-      {selected && <small>✓ የተመረጠ</small>}
+      {occupied ? <small>የተያዘ</small> : selected ? <small>✓ የተመረጠ</small> : null}
     </article>
   );
 }
@@ -881,58 +884,6 @@ export default function Index() {
         {adminUnlockOpen && <AdminPasswordDialog onClose={() => setAdminUnlockOpen(false)} onSuccess={completeAdminLogin} />}
       </main>
     );
-  if (!playing && screen === "selection" && !finalizing)
-    return (
-      <main className="maleda-selection-shell">
-        <div className="maleda-selection-canvas">
-          <img src="/maleda-selection.png" alt="Maleda Bingo card selection board" className="maleda-selection-artwork" />
-          <section className="maleda-selection-hotspots" aria-label="Bingo card selection controls">
-            <div className="maleda-board-grid" aria-label="Available bingo boards">
-              {Array.from({ length: 100 }, (_, index) => index + 261).map((id) => (
-                <button
-                  key={id}
-                  type="button"
-                  className={`${selected.includes(id) ? "active" : ""} ${occupiedCardIds.has(id) ? "occupied" : ""}`}
-                  onClick={() => toggle(id)}
-                  disabled={selectionLocked || occupiedCardIds.has(id)}
-                  aria-pressed={selected.includes(id)}
-                  aria-label={`Board ${id}`}
-                >
-                  <span className="sr-only">Board {id}</span>
-                </button>
-              ))}
-            </div>
-            <button className="maleda-selection-control remove" type="button" onClick={() => selected.length && toggle(selected[selected.length - 1])} aria-label="Remove selected card" />
-            <button className="maleda-selection-control remove-all" type="button" onClick={() => selected.forEach((id) => toggle(id))} aria-label="Remove all cards" />
-            <button className="maleda-selection-control play" type="button" disabled={selectionLocked || !selected.length || countdown !== null} onClick={start} aria-label="Start bingo game" />
-            <button className="maleda-selection-control leave" type="button" onClick={() => { setScreen("landing"); setSelected([]); setCountdown(null); setNotice(""); }} aria-label="Leave game" />
-          </section>
-        </div>
-        <div className="maleda-selection-status" aria-live="polite">
-          <span>{selectionLocked ? "ጨዋታ እየተካሄደ ነው" : "ካርድ ይምረጡ"}</span>
-          <b>{countdown !== null ? countdown : selected.length}/2</b>
-          {notice && <small>{notice}</small>}
-        </div>
-        {leaderboardOpen && <LeaderboardPanel apiBase={apiBase} onClose={() => setLeaderboardOpen(false)} />}
-        {panel && (
-          <WalletPanel
-            panel={panel}
-            user={user}
-            wallet={wallet}
-            apiBase={apiBase}
-            initData={initData}
-            walletForm={walletForm}
-            setWalletForm={setWalletForm}
-            walletBusy={walletBusy}
-            setWalletBusy={setWalletBusy}
-            loadWallet={loadWallet}
-            onClose={() => setPanel(null)}
-            onNotice={setNotice}
-          />
-        )}
-        {adminUnlockOpen && <AdminPasswordDialog onClose={() => setAdminUnlockOpen(false)} onSuccess={completeAdminLogin} />}
-      </main>
-    );
   if (playing)
     return (
       <main className="app-shell playing-shell">
@@ -1094,19 +1045,23 @@ export default function Index() {
         <b>{selectionCountdownExpired ? String(countdown ?? 0).padStart(2, "0") : selectionLocked ? "00" : countdown ?? 50}</b>
         <small>ሰከንድ</small>
       </div>
-      <section className="number-grid" aria-label="Card identifiers">
-        {cardIdentifiers.map((id) => (
-          <button
-            key={id}
-            className={`${selected.includes(id) ? "active" : ""} ${occupiedCardIds.has(id) ? "occupied" : ""} ${botCardIds.has(id) ? "bot-occupied" : ""}`}
-            onClick={() => toggle(id)}
-            disabled={selectionLocked || occupiedCardIds.has(id)}
-            aria-pressed={selected.includes(id)}
-            aria-label={botCardIds.has(id) ? `Card ${id}, occupied by bot` : occupiedCardIds.has(id) ? `Card ${id}, occupied` : `Card ${id}`}
-          >
-            {id}
-          </button>
-        ))}
+      <section className="card-selection-grid" aria-label="Available Bingo cards">
+        {cardIdentifiers.map((id) => {
+          const card = cardForId(id);
+          if (!card) return null;
+          const occupied = occupiedCardIds.has(id);
+          return (
+            <CardView
+              key={id}
+              card={card}
+              selected={selected.includes(id)}
+              occupied={occupied}
+              called={called}
+              onClick={() => toggle(id)}
+              gameType={gameType}
+            />
+          );
+        })}
       </section>
       <section
         className="selected-previews"
